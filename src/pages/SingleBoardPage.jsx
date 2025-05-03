@@ -9,6 +9,12 @@ const SingleBoardPage = () => {
   const [error, setError] = useState(null);
   const { boardId } = useParams();
 
+  const handleBoardUpdated = (updatedBoardData) => {
+    console.log("handleBoardUpdated called from child!", updatedBoardData);
+    // This is where we update the state in the parent component
+    setBoard(updatedBoardData); // <-- Update the main 'board' state
+  };
+
   useEffect(() => {
     console.log("Use effect runnning for :", boardId);
     const fetchBoard = async () => {
@@ -82,7 +88,7 @@ const SingleBoardPage = () => {
   return (
     <>
       <h2>Board Details</h2>
-      <BoardDetails board={board} />
+      <BoardDetails board={board} onBoardUpdated={handleBoardUpdated} />
     </>
   );
 };
