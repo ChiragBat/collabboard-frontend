@@ -6,21 +6,10 @@ const ColumnList = ({ columns }) => {
     return <div>No columns found</div>;
   }
   return (
-    <div className="column-list">
+    <div className="column-list flex flex-row w-100 gap-5 justify-around overflow-x-auto ">
       {columns.map((column) => (
-        <div
-          key={column.id}
-          className="column-element"
-          style={{
-            flexShrink: 0,
-            width: "300px",
-            backgroundColor: "#f0f0f0",
-            padding: "12px",
-            borderRadius: "4px",
-          }}
-        >
-          <Column key={column.id} column={column} />
-          <p>cards</p>
+        <div key={column.id} className="column-element">
+          <Column column={column} />
         </div>
       ))}
     </div>

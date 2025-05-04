@@ -11,8 +11,7 @@ const SingleBoardPage = () => {
 
   const handleBoardUpdated = (updatedBoardData) => {
     console.log("handleBoardUpdated called from child!", updatedBoardData);
-    // This is where we update the state in the parent component
-    setBoard(updatedBoardData); // <-- Update the main 'board' state
+    setBoard(updatedBoardData);
   };
 
   useEffect(() => {
@@ -24,8 +23,8 @@ const SingleBoardPage = () => {
         setBoard(null);
 
         const [boardResponse, cardResponse] = await Promise.all([
-          axios.get(`http://localhost:8080/api/boards/${boardId}`),
-          axios.get(`http://localhost:8080/api/boards/${boardId}/cards`),
+          axios.get(`/api/boards/${boardId}`),
+          axios.get(`/api/boards/${boardId}/cards`),
         ]);
         const boardData = boardResponse.data;
         const allCardsData = cardResponse.data;
@@ -86,10 +85,10 @@ const SingleBoardPage = () => {
   }
 
   return (
-    <>
-      <h2>Board Details</h2>
+    <div className="bg-black flex flex-col items-center justify-start w-screen h-screen text-white font-mono">
+      <h2 className="my-3 text-3xl underline ">Board Details</h2>
       <BoardDetails board={board} onBoardUpdated={handleBoardUpdated} />
-    </>
+    </div>
   );
 };
 export default SingleBoardPage;

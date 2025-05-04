@@ -34,6 +34,9 @@ const BoardDetails = ({ board, onBoardUpdated }) => {
       onBoardUpdated(response.data);
     } catch {
       console.log("Failed");
+    } finally {
+      setIsEditingName(false);
+      setIsEditingDescription(false);
     }
   };
 
@@ -46,7 +49,7 @@ const BoardDetails = ({ board, onBoardUpdated }) => {
   const handleDescriptionClick = () => {
     console.log("Board name clicked!");
     setIsEditingDescription(true);
-    setBoardDescriptionValue(board.name);
+    setBoardDescriptionValue(board.description);
   };
 
   const handleNameBlur = () => {
@@ -83,7 +86,7 @@ const BoardDetails = ({ board, onBoardUpdated }) => {
     setBoardDescriptionValue(event.target.value);
   };
   return (
-    <div>
+    <div className=" mt-2 w-full h-full flex flex-col items-center justify-start gap-4">
       {isEditingName ? (
         <input
           type="text"
@@ -94,7 +97,9 @@ const BoardDetails = ({ board, onBoardUpdated }) => {
         ></input>
       ) : (
         <div>
-          <h3 onClick={handleNameClick}>{board.name}</h3>
+          <h3 onClick={handleNameClick} className="text-2xl mt-2">
+            {board.name}
+          </h3>
         </div>
       )}
       {isEditingDescription ? (
@@ -106,10 +111,12 @@ const BoardDetails = ({ board, onBoardUpdated }) => {
         />
       ) : (
         <div onClick={handleDescriptionClick}>
-          <p>{board.description}</p>
+          <p className="italic text-1xl">{board.description}</p>
         </div>
       )}
-      <ColumnList columns={board.columns} />
+      <div className="">
+        <ColumnList columns={board.columns} />
+      </div>
     </div>
   );
 };

@@ -13,9 +13,7 @@ const BoardList = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(
-          "http://localhost:8080/api/boards/all/1"
-        );
+        const response = await axios.get("/api/boards/all/1");
         console.log("Api response data", response.data);
         setBoards(response.data);
         setLoading(false);
@@ -33,18 +31,18 @@ const BoardList = () => {
     return <div>{error}</div>;
   }
   return (
-    <>
-      <h2>My Boards</h2>
+    <div className="flex flex-col justify-start items-center h-screen w-screen font-mono bg-black text-white">
+      <h2 className=" text-3xl my-2">My Boards</h2>
       {boards.length === 0 ? (
         <p>No boards found for this user. Try creating one in the backend!</p>
       ) : (
-        <ul>
+        <ul className="flex flex-row justify-around w-full flex-wrap ">
           {boards.map((board) => (
             <BoardItemList key={board.id} board={board} />
           ))}
         </ul>
       )}
-    </>
+    </div>
   );
 };
 export default BoardList;
