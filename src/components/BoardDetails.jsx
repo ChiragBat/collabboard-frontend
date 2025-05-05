@@ -86,7 +86,7 @@ const BoardDetails = ({ board, onBoardUpdated }) => {
     setBoardDescriptionValue(event.target.value);
   };
   return (
-    <div className=" mt-2 w-full h-full flex flex-col items-center justify-start gap-4">
+    <div className=" mt-2 w-full h-1/4 flex flex-col items-center justify-start gap-4">
       {isEditingName ? (
         <input
           type="text"
@@ -114,9 +114,6 @@ const BoardDetails = ({ board, onBoardUpdated }) => {
           <p className="italic text-1xl">{board.description}</p>
         </div>
       )}
-      <div className="">
-        <ColumnList columns={board.columns} />
-      </div>
     </div>
   );
 };

@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import BoardDetails from "../components/BoardDetails";
+import ColumnList from "../components/ColumnList";
+import CreateColumn from "../components/CreateColumnModal";
 
 const SingleBoardPage = () => {
   const [board, setBoard] = useState({});
@@ -9,9 +11,48 @@ const SingleBoardPage = () => {
   const [error, setError] = useState(null);
   const { boardId } = useParams();
 
+  const [isCreateColumnOpen, setIsCreateColumnOpen] = useState(false);
+
+  const handleCloseCreateColumn = () => {
+    setIsCreateColumnOpen(false);
+  };
+  const handleOpenCreateColumn = () => {
+    setIsCreateColumnOpen(true);
+  };
+  const handleCreateColumnSubmit = async (columnName) => {
+    const currentBoardId = boardId;
+    const payload = {
+      name: columnName,
+    };
+    try {
+      const response = await axios.post(
+        `/api/boards/${currentBoardId}/columns`,
+        payload
+      );
+      const newColumn = response.data;
+
+      setBoard((prevBoard) => {
+        const updatedBoard = [...prevBoard];
+        updatedBoard.columns = [...prevBoard.columns, newColumn];
+        return updatedBoard;
+      });
+    } catch {
+      alert("Failed to create Column");
+    }
+  };
+
   const handleBoardUpdated = (updatedBoardData) => {
     console.log("handleBoardUpdated called from child!", updatedBoardData);
     setBoard(updatedBoardData);
+  };
+  const handleDelete = (columnId) => {
+    setBoard((prevBoard) => {
+      const updatedBoard = { ...prevBoard };
+      updatedBoard.columns = updatedBoard.columns.filter(
+        (column) => column.id !== columnId
+      );
+      return updatedBoard;
+    });
   };
 
   useEffect(() => {
@@ -86,8 +127,32 @@ const SingleBoardPage = () => {
 
   return (
     <div className="bg-black flex flex-col items-center justify-start w-screen h-screen text-white font-mono">
-      <h2 className="my-3 text-3xl underline ">Board Details</h2>
-      <BoardDetails board={board} onBoardUpdated={handleBoardUpdated} />
+      <div className="flex justify-between items-center w-full px-8 py-4">
+        <h2 className="text-3xl underline">Board Details</h2>
+        {!isCreateColumnOpen && (
+          <button
+            onClick={handleOpenCreateColumn}
+            className="bg-white text-black px-4 py-2 rounded-md font-bold hover:bg-gray-300"
+          >
+            + Add Column
+          </button>
+        )}
+        <CreateColumn
+          isOpen={isCreateColumnOpen}
+          onClose={handleCloseCreateColumn}
+          onSubmit={handleCreateColumnSubmit}
+        />
+      </div>
+      <BoardDetails
+        board={board}
+        onBoardUpdated={handleBoardUpdated}
+        onColumnDeleted={handleDelete}
+      />
+      <ColumnList
+        columns={board.columns}
+        boardId={boardId}
+        onColumnDeleted={handleDelete}
+      />
     </div>
   );
 };

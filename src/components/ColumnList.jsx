@@ -1,15 +1,32 @@
 import React from "react";
 import Column from "./Column";
+import { useState } from "react";
+import axios from "axios";
 
-const ColumnList = ({ columns }) => {
+const ColumnList = ({ columns, boardId, onColumnDeleted }) => {
+  const handleDeleteCol = async (columnId) => {
+    const isConfirmed = window.confirm(
+      "Are u sure you want to delete this column"
+    );
+    if (isConfirmed) {
+      try {
+        await axios.delete(`/api/boards/${boardId}/columns/${columnId}`);
+        if (onColumnDeleted) {
+          onColumnDeleted(columnId);
+        }
+      } catch (e) {
+        alert("Please try again");
+      }
+    }
+  };
   if (!columns || columns.length === 0) {
     return <div>No columns found</div>;
   }
   return (
-    <div className="column-list flex flex-row w-100 gap-5 justify-around overflow-x-auto ">
+    <div className="column-list flex flex-row w-screen gap-5 justify-around overflow-x-auto ">
       {columns.map((column) => (
         <div key={column.id} className="column-element">
-          <Column column={column} />
+          <Column column={column} onDelete={handleDeleteCol} />
         </div>
       ))}
     </div>
