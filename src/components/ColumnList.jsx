@@ -2,7 +2,13 @@ import React from "react";
 import Column from "./Column";
 import axios from "axios";
 
-const ColumnList = ({ columns, boardId, onColumnDeleted, onCardCreated }) => {
+const ColumnList = ({
+  columns,
+  boardId,
+  onColumnDeleted,
+  onCardCreated,
+  onCardDeleted,
+}) => {
   const handleDeleteCol = async (columnId) => {
     const isConfirmed = window.confirm(
       "Are u sure you want to delete this column"
@@ -29,6 +35,7 @@ const ColumnList = ({ columns, boardId, onColumnDeleted, onCardCreated }) => {
             column={column}
             onDelete={handleDeleteCol}
             onCardCreated={onCardCreated}
+            onCardDeleted={onCardDeleted}
             boardId={boardId}
           />
         </div>

@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import Card from "./Card";
 import axios from "axios";
 
-const Column = ({ column, boardId, onDelete, onCardCreated }) => {
+const Column = ({
+  column,
+  boardId,
+  onDelete,
+  onCardCreated,
+  onCardDeleted,
+}) => {
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [cardContent, setCardContent] = useState("");
 
@@ -66,18 +72,20 @@ const Column = ({ column, boardId, onDelete, onCardCreated }) => {
   const cards = column.cards && Array.isArray(column.cards) ? column.cards : [];
   return (
     <div className="column bg-[#670D2F] p-2 rounded-xl relative flex flex-col items-center gap-2">
-      <div className="flex flex-col gap-2">
-        <h3 className="underline ">{column.name}</h3>
-        <div className="absolute cursor-pointer top-2 right-2 z-10 flex flex-row gap-2">
+      <div className="w-full flex justify-between items-start mb-2 px-1">
+        <h3 className="underline text-lg font-semibold break-words mr-2">
+          {column.name}
+        </h3>
+        <div className="flex flex-row gap-1 items-center flex-shrink-0">
           <div
-            className="cursor-pointer"
+            className="cursor-pointer p-1 hover:bg-pink-700 rounded"
             onClick={handleDeleteColumn}
             title="Delete column"
           >
             🗑️
           </div>
           <div
-            className="cursor-pointer"
+            className="cursor-pointer p-1 hover:bg-pink-700 rounded text-xl font-bold"
             onClick={handleAddCardClick}
             title="Add new card"
           >
@@ -89,7 +97,14 @@ const Column = ({ column, boardId, onDelete, onCardCreated }) => {
         {cards.length === 0 ? (
           <p>No cards yet</p>
         ) : (
-          cards.map((card) => <Card key={card.id} card={card} />)
+          cards.map((card) => (
+            <Card
+              key={card.id}
+              card={card}
+              boardId={boardId}
+              onCardDeleted={onCardDeleted}
+            />
+          ))
         )}
         {isAddingCard && (
           <div className="w-full mt-1">

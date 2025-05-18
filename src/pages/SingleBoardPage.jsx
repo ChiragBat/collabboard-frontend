@@ -98,6 +98,34 @@ const SingleBoardPage = () => {
     });
   };
 
+  const handleCardDeleted = (deletedCardId, targetColumnId) => {
+    setBoard((prevBoard) => {
+      if (!prevBoard || !prevBoard.columns) {
+        console.error(
+          "Cannot delete card: board or columns data is missing.",
+          prevBoard
+        );
+        return prevBoard;
+      }
+      const updatedColumns = prevBoard.columns.map((column) => {
+        if (column.id === targetColumnId) {
+          const updatedCards = (column.cards || []).filter(
+            (card) => card.id !== deletedCardId
+          );
+          return {
+            ...column,
+            cards: updatedCards,
+          };
+        }
+        return column;
+      });
+      return {
+        ...prevBoard,
+        columns: updatedColumns,
+      };
+    });
+  };
+
   useEffect(() => {
     console.log("Use effect runnning for :", boardId);
     const fetchBoard = async () => {
@@ -195,6 +223,7 @@ const SingleBoardPage = () => {
         boardId={boardId}
         onColumnDeleted={handleDelete}
         onCardCreated={handleCardCreated}
+        onCardDeleted={handleCardDeleted}
       />
     </div>
   );
