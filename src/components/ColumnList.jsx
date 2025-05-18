@@ -1,9 +1,8 @@
 import React from "react";
 import Column from "./Column";
-import { useState } from "react";
 import axios from "axios";
 
-const ColumnList = ({ columns, boardId, onColumnDeleted }) => {
+const ColumnList = ({ columns, boardId, onColumnDeleted, onCardCreated }) => {
   const handleDeleteCol = async (columnId) => {
     const isConfirmed = window.confirm(
       "Are u sure you want to delete this column"
@@ -26,7 +25,12 @@ const ColumnList = ({ columns, boardId, onColumnDeleted }) => {
     <div className="column-list flex flex-row w-screen gap-5 justify-around overflow-x-auto ">
       {columns.map((column) => (
         <div key={column.id} className="column-element">
-          <Column column={column} onDelete={handleDeleteCol} />
+          <Column
+            column={column}
+            onDelete={handleDeleteCol}
+            onCardCreated={onCardCreated}
+            boardId={boardId}
+          />
         </div>
       ))}
     </div>

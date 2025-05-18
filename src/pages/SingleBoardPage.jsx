@@ -6,7 +6,7 @@ import ColumnList from "../components/ColumnList";
 import CreateColumn from "../components/CreateColumnModal";
 
 const SingleBoardPage = () => {
-  const [board, setBoard] = useState({});
+  const [board, setBoard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { boardId } = useParams();
@@ -32,11 +32,27 @@ const SingleBoardPage = () => {
       const newColumn = response.data;
 
       setBoard((prevBoard) => {
-        const updatedBoard = [...prevBoard];
-        updatedBoard.columns = [...prevBoard.columns, newColumn];
-        return updatedBoard;
+        if (!prevBoard) {
+          return {
+            id: currentBoardId,
+            name: "Board",
+            description: "",
+            columns: [newColumn],
+          };
+        }
+        const existingColumns = Array.isArray(prevBoard.columns)
+          ? prevBoard.columns
+          : [];
+        return {
+          ...prevBoard,
+          columns: [...existingColumns, newColumn],
+        };
       });
-    } catch {
+    } catch (error) {
+      console.error(
+        "Failed to create Column:",
+        error.response?.data || error.message || error
+      );
       alert("Failed to create Column");
     }
   };
@@ -55,13 +71,39 @@ const SingleBoardPage = () => {
     });
   };
 
+  const handleCardCreated = (newCard, targetColumnId) => {
+    setBoard((prevBoard) => {
+      if (!prevBoard || !prevBoard.columns) {
+        console.error(
+          "Cannot create card: board or columns data is missing.",
+          prevBoard
+        );
+        return prevBoard;
+      }
+      const updatedColumns = prevBoard.columns.map((column) => {
+        if (column.id === targetColumnId) {
+          // Ensure cards array exists and is an array before spreading
+          const existingCards = Array.isArray(column.cards) ? column.cards : [];
+          return {
+            ...column,
+            cards: [...existingCards, newCard],
+          };
+        }
+        return column;
+      });
+      return {
+        ...prevBoard,
+        columns: updatedColumns,
+      };
+    });
+  };
+
   useEffect(() => {
     console.log("Use effect runnning for :", boardId);
     const fetchBoard = async () => {
       try {
         setLoading(true);
         setError(null);
-        setBoard(null);
 
         const [boardResponse, cardResponse] = await Promise.all([
           axios.get(`/api/boards/${boardId}`),
@@ -122,7 +164,7 @@ const SingleBoardPage = () => {
     return <div style={{ color: "red" }}>{error}</div>;
   }
   if (!board) {
-    return <div>Board data does not exist</div>;
+    return <div>Board data does not exist or is loading...</div>;
   }
 
   return (
@@ -152,6 +194,7 @@ const SingleBoardPage = () => {
         columns={board.columns}
         boardId={boardId}
         onColumnDeleted={handleDelete}
+        onCardCreated={handleCardCreated}
       />
     </div>
   );
